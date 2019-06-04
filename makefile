@@ -28,7 +28,7 @@ git-clean:
 
 helm-delete:
 	-kubectx jdk8s-us
-	-helm delete --purge deen-chat
+	-helm delete --purge chatty-bot
 	-kubectx docker-for-desktop
 
 azd-clean:
