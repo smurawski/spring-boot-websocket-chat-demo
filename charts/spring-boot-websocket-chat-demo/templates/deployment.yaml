@@ -10,7 +10,7 @@ spec:
   template:
     metadata:
       annotations:
-        buildID: {{ .Values.buildID }}
+        buildID: {{ .Values.buildID | quote }}
       labels:
         draft: {{ default "draft-app" .Values.draft }}
         app: {{ template "fullname" . }}
@@ -26,7 +26,7 @@ spec:
         ports:
         - containerPort: {{ .Values.service.internalPort }}
       env:
-        - name: APPINSIGHTS_INSTRUMENTATIONKEY
-          value: {{ .Values.applicationInsights.InstrumentationKey }}
+      - name: APPINSIGHTS_INSTRUMENTATIONKEY
+        value: {{ .Values.applicationInsights.InstrumentationKey }}
         resources:
 {{ toYaml .Values.resources | indent 12 }}
