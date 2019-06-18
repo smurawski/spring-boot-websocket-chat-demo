@@ -246,6 +246,6 @@ stages:
               command: upgrade
               chartType: FilePath
               chartPath: '$(System.ArtifactsDirectory)/charts/spring-boot-websocket-chat-demo-v0.1.0.tgz'
-              releaseName: 'swampup19-dev'
-              namespace: 'jfrog'
+              releaseName: 'swampup19-prod'
+              namespace: 'jfrog-prod'
               overrideValues: 'image.repository=jfrogjd-docker.jfrog.io/jldeen/spring-boot-websocket-chat-demo,image.tag=$(Build.BuildId),buildID=$(Build.BuildId)'
