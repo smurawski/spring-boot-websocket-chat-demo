@@ -24,7 +24,8 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
-        - containerPort: {{ .Values.service.internalPort }}
+          - name: http
+            containerPort: {{ .Values.service.internalPort }}
         livenessProbe:
           httpGet:
             path: /
