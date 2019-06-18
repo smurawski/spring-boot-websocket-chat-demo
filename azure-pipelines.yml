@@ -164,6 +164,7 @@ stages:
       runOnce:
         deploy:
           steps:
+
           - bash: |
               ## Jfrog Download Helm Chart
               ./jfrog rt download --server-id=$(server-id) --build-name=$(System.TeamProject) --build-number=$(Build.BuildId) "helm-repo/*.tgz" $(System.ArtifactsDirectory)/charts/
@@ -197,4 +198,4 @@ stages:
               chartPath: '$(System.ArtifactsDirectory)/charts/spring-boot-websocket-chat-demo-v0.1.0.tgz'
               releaseName: 'swampup19-dev'
               namespace: 'jfrog'
-              overrideValues: 'image.repository=jfrogjd-docker.jfrog.io/jldeen/spring-boot-websocket-chat-demo,image.tag=$(Build.BuildId),ingress.hostname:dev-swampup19.k8s.az.jessicadeen.com'
+              overrideValues: 'image.repository=jfrogjd-docker.jfrog.io/jldeen/spring-boot-websocket-chat-demo,image.tag=$(Build.BuildId),ingress.hostname=dev-swampup19.k8s.az.jessicadeen.com'
