@@ -1,6 +1,5 @@
 # FROM openjdk:11-jre-slim
-FROM adoptopenjdk/openjdk11:x86_64-alpine-jre11u-nightly
-RUN apk add bash
+FROM jfrogjd-docker.jfrog.io/jldeen/alpine-jre-patched:latest
 ENV PORT 8080
 EXPOSE 8080
 COPY ./target /opt/target
