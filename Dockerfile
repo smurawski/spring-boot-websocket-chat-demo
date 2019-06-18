@@ -1,6 +1,6 @@
-# FROM openjdk:11-jre-slim
-FROM adoptopenjdk/openjdk11:x86_64-alpine-jre11u-nightly
-RUN apk add bash
+FROM openjdk:11-jre-slim
+# FROM adoptopenjdk/openjdk11:x86_64-alpine-jre11u-nightly
+# RUN apk add bash
 ENV PORT 8080
 EXPOSE 8080
 COPY ./target /opt/target
