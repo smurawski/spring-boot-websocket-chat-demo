@@ -13,7 +13,7 @@ all:
 local-clean:
 	-kubectx docker-for-desktop
 	-helm delete --purge spring-boot-websocket-chat-demo
-	-rm -rf charts draft.toml Dockerfile .draftignore .dockerignore .draft-tasks.toml target .classpath .project
+	-rm -rf charts draft.toml Dockerfile .draftignore .dockerignore .draft-tasks.toml
 
 # delete-branch: 
 # 	-git branch -d $(BRANCH)
