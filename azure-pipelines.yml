@@ -148,3 +148,54 @@ stages:
       displayName: 'Publish Artifact: drop'
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
+        
+- stage: DeployToDev
+  displayName: Deploy to Dev
+  dependsOn: Build
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/'))
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy job
+    pool:
+      # name: work-machine
+      name: jldeenlinux
+    environment: 'chattybot-dev.jfrog-jdk8s-us'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          
+          - bash: |
+              ## Jfrog Download Helm Chart
+              ./jfrog rt download --server-id=$(server-id) --build-name=$(System.TeamProject) --build-number=$(Build.BuildId) "helm-repo/*.tgz" $(System.ArtifactsDirectory)/charts/
+            displayName: Download Helm Chart Artifact
+
+          - bash: 'ls -la $(System.ArtifactsDirectory)/charts && echo "$(System.ArtifactsDirectory)"'
+            displayName: 'Check pipeline artifacts'
+
+          - task: HelmInstaller@0
+            inputs:
+              helmVersion: '2.14.0'
+
+          - task: HelmDeploy@0
+            displayName: 'helm init'
+            inputs:
+              azureSubscription: 'ca-jessde-demo-test (dfb5d696-98d8-447c-a14d-56f131f3c4a5)'
+              azureResourceGroup: 'jdk8s-us'
+              kubernetesCluster: 'jdk8s-us'
+              command: init
+              upgradeTiller: false
+              arguments: '--client-only'
+
+          - task: HelmDeploy@0
+            displayName: 'helm upgrade'
+            inputs:
+              azureSubscription: 'ca-jessde-demo-test (dfb5d696-98d8-447c-a14d-56f131f3c4a5)'
+              azureResourceGroup: 'jdk8s-us'
+              kubernetesCluster: 'jdk8s-us'
+              command: upgrade
+              chartType: FilePath
+              chartPath: '$(System.ArtifactsDirectory)/charts/spring-boot-websocket-chat-demo-v0.1.0.tgz'
+              releaseName: 'swampup19-dev'
+              namespace: 'jfrog'
+              overrideValues: 'image.repository=jfrogjd-docker.jfrog.io/jldeen/spring-boot-websocket-chat-demo,image.tag=$(Build.BuildId),ingress.hostname:dev-swampup19.k8s.az.jessicadeen.com'
