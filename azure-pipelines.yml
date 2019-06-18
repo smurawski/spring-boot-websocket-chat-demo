@@ -60,7 +60,9 @@ stages:
       displayName: 'Install Helm 2.14.1'
       inputs:
         helmVersion: 2.14.1
-
+    - bash: helm lint charts/spring-boot-websocket-chat-demo
+      displayName: helm lint
+      
     - task: HelmDeploy@0
       displayName: 'helm package'
       inputs:
