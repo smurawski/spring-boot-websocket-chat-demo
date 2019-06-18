@@ -117,7 +117,6 @@ stages:
         JF_XRAY_ALERTS=$(jq ".summary.total_alerts" results.json)
         JF_SCAN_FAIL=$(jq ".summary.fail_build" results.json)
         JF_XRAY_RPT="https://jfrogjd-xray.jfrog.io/web/#/component/details/docker:~2F~2Fjldeen~2Fspring-boot-websocket-chat-demo/$(Build.BuildId)"
-        JF_SCAN_FAIL=$(jq ".summary.fail_build" results.json)
 
         if [[ $JF_XRAY_ALERTS -eq 0 ]]; then
           slackStyle=good && echo "No Xray Scan alerts found"
@@ -152,11 +151,6 @@ stages:
         }' && echo "Slack XRay Message Posted"
         if [[ "'$JF_SCAN_FAIL'" = *true* ]]; then exit 1; else exit 0; fi
       displayName: 'Slack Xray Trigger'
-
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact: drop'
-      inputs:
-        PathtoPublish: '$(build.artifactstagingdirectory)'
         
 - stage: DeployToDev
   displayName: Deploy to Dev
@@ -173,7 +167,6 @@ stages:
       runOnce:
         deploy:
           steps:
-
           - bash: |
               ## Jfrog Download Helm Chart
               ./jfrog rt download --server-id=$(server-id) --build-name=$(System.TeamProject) --build-number=$(Build.BuildId) "helm-repo/*.tgz" $(System.ArtifactsDirectory)/charts/
