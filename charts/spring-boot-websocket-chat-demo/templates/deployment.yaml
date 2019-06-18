@@ -24,16 +24,7 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
-          - name: http
-            containerPort: {{ .Values.service.internalPort }}
-        livenessProbe:
-          httpGet:
-            path: /
-            port: http
-        readinessProbe:
-          httpGet:
-            path: /
-            port: http
+          - containerPort: {{ .Values.service.internalPort }}
         env:
           - name: APPINSIGHTS_INSTRUMENTATIONKEY
             value: {{ .Values.applicationInsights.InstrumentationKey }}
