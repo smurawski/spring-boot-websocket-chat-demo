@@ -14,13 +14,15 @@ variables:
   server-id: 'jfrog-jd'
   # art url
   ART_URL: 'https://jfrogjd.jfrog.io/jfrogjd'
+  # slack channel
+  slackChannel: 'chattybot'
 
 stages:
 - stage: Build
   displayName: Build stage
   jobs:
   - job: Build
-    displayName: kubernetes build
+    displayName: Build
     pool:
       # name: work-machine
       name: $(vmImageName)
@@ -40,13 +42,13 @@ stages:
         
         # Configure Jfrog CLI
         ./jfrog rt config $(server-id) --url=$(ART_URL) --user=$(ART_USER) --password=$(ART_PASS)
-        displayName: 'jfrog install, configure cli'
+      displayName: 'jfrog install, configure cli'
 
     - bash: |
         # --- jfrog Maven Build
         export M2_HOME=/usr/share/maven
         ./jfrog rt mvn "clean install -Dproject.version=$(Build.BuildId) -Dartifactory.publish.buildInfo=true" maven.yaml --build-name=$(System.TeamProject) --build-number=$(Build.BuildId)
-        displayName: 'jfrog maven build'
+      displayName: 'jfrog maven build'
 
     - task: Docker@2
       displayName: buildAndPush
@@ -81,7 +83,7 @@ stages:
         
         # --- Xray Scan
         ./jfrog rt build-scan --server-id=$(server-id) $(System.TeamProject) $(Build.BuildId) | tee results.json 
-        displayName: 'jfrog publish build info to artifactory'
+      displayName: 'jfrog publish build info to artifactory'
 
     - bash: |
         ## Jfrog Build
@@ -107,7 +109,7 @@ stages:
                 }
             ]
         }' && echo "Slack Build Message Posted"
-        displayName: 'Slack Build Trigger'
+      displayName: 'Slack Build Trigger'
 
     - bash: |
         ## Jfrog Xray Scan
@@ -140,7 +142,7 @@ stages:
                 }
             ]
         }' && echo "Slack XRay Message Posted"
-        displayName: 'Slack Xray Trigger'
+      displayName: 'Slack Xray Trigger'
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
