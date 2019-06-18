@@ -201,7 +201,7 @@ stages:
               overrideValues: 'image.repository=jfrogjd-docker.jfrog.io/jldeen/spring-boot-websocket-chat-demo,image.tag=$(Build.BuildId),ingress.hostname=dev-swampup19.k8s.az.jessicadeen.com,buildID=$(Build.BuildId)'
 - stage: PromoteToProd
   displayName: Promote to Prod
-  dependsOn: Build
+  dependsOn: DeployToDev
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/'))
   jobs:
   - deployment: Deploy
