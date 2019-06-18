@@ -159,12 +159,11 @@ stages:
     pool:
       # name: work-machine
       name: jldeenlinux
-    environment: 'chattybot-dev.jfrog-jdk8s-us'
+    environment: 'chattybot-dev'
     strategy:
       runOnce:
         deploy:
           steps:
-          
           - bash: |
               ## Jfrog Download Helm Chart
               ./jfrog rt download --server-id=$(server-id) --build-name=$(System.TeamProject) --build-number=$(Build.BuildId) "helm-repo/*.tgz" $(System.ArtifactsDirectory)/charts/
