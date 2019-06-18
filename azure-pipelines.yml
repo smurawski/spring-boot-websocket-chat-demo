@@ -116,11 +116,17 @@ stages:
         
         JF_XRAY_ALERTS=$(jq ".summary.total_alerts" results.json)
         JF_XRAY_RPT="https://jfrogjd-xray.jfrog.io/web/#/component/details/docker:~2F~2Fjldeen~2Fspring-boot-websocket-chat-demo/$(Build.BuildId)"
+
+        if [ $JF_XRAY_ALERTS -eq 0 ]; then
+          slackStyle=good && echo "No Xray Scan alerts found"
+        else
+          slackStyle=danger && echo "Xray scan alerts found"
+        fi
         
         curl -X POST https://slack.com/api/chat.postMessage -H 'Accept: */*'   -H 'Authorization: Bearer $(slackBotToken)'   -H 'Connection: keep-alive'   -H 'Content-Type: application/json; charset=utf-8'   -H 'accept-encoding: gzip, deflate'   -d '{"channel": "$(slackChannel)", "text": "JFrog XRay Scan Report for Build $(Build.BuildID)", "attachments": [
                 {
                     "fallback": "JFrog XRay Scan Report for Build $(Build.BuildID)",
-                    "color": "#36a64f",
+                    "color": "'$slackStyle'"
                     "author_link": "'$JF_XRAY_RPT'",
                     "title": "JFrog XRay Scan Report",
                     "title_link": "'$JF_XRAY_RPT'",
