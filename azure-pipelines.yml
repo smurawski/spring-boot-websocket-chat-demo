@@ -198,4 +198,4 @@ stages:
               chartPath: '$(System.ArtifactsDirectory)/charts/spring-boot-websocket-chat-demo-v0.1.0.tgz'
               releaseName: 'swampup19-dev'
               namespace: 'jfrog'
-              overrideValues: 'image.repository=jfrogjd-docker.jfrog.io/jldeen/spring-boot-websocket-chat-demo,image.tag=$(Build.BuildId),ingress.hostname=dev-swampup19.k8s.az.jessicadeen.com'
+              overrideValues: 'image.repository=jfrogjd-docker.jfrog.io/jldeen/spring-boot-websocket-chat-demo,image.tag=$(Build.BuildId),ingress.hostname=dev-swampup19.k8s.az.jessicadeen.com,buildID=$(Build.BuildId)'
