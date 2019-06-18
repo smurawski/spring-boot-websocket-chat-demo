@@ -26,13 +26,13 @@ spec:
         ports:
         - containerPort: {{ .Values.service.internalPort }}
         livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+          httpGet:
+            path: /
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
         env:
           - name: APPINSIGHTS_INSTRUMENTATIONKEY
             value: {{ .Values.applicationInsights.InstrumentationKey }}
