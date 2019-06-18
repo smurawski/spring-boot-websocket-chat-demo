@@ -25,3 +25,5 @@ ingress:
      certmanager.k8s.io/cluster-issuer: letsencrypt-prod
      kubernetes.io/tls-acme: "true"
   tls: true
+applicationInsights:
+  InstrumentationKey: 004d8eb9-d9af-49d0-bdda-b2d070eb1157
