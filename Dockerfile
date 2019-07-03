@@ -3,6 +3,7 @@ FROM openjdk:11-jre-slim
 # RUN apk update && apk add bash
 ENV PORT 8080
 EXPOSE 8080
+RUN ls -la
 COPY ./target /opt/target
 WORKDIR /opt/target
 
