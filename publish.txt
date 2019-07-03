@@ -1,0 +1,3 @@
+[Info] Encrypting password...
+Running jfrog rt build-publish --build-url=https://g.codefresh.io//build/5d151f3c868b6717f2ef19dc --env-exclude=*key*;*pass*; spring-boot-websocket-chat-demo 5d151f3c868b6717f2ef19dc
+[Error] open /tmp/jfrog/builds/c3ByaW5nLWJvb3Qtd2Vic29ja2V0LWNoYXQtZGVtb181ZDE1MWYzYzg2OGI2NzE3ZjJlZjE5ZGM=/partials/details: no such file or directory
