@@ -21,7 +21,7 @@ volumes:[
   node ('jenkins-pipeline') {
 
     def pwd = pwd()
-    def chart_dir = "${pwd}/charts/croc-hunter"
+    def chart_dir = "${pwd}/charts/spring-boot-websocket-chat-demo"
 
     checkout scm
 
