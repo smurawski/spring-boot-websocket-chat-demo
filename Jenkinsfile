@@ -83,16 +83,14 @@ volumes:[
           namespace     : config.app.name,
           chart_dir     : chart_dir,
           set           : [
-            "imageTag": image_tags_list.get(0),
+            "image.tag": image_tags_list.get(0),
             "replicas": config.app.replicas,
             "cpu": config.app.cpu,
             "memory": config.app.memory,
             "ingress.hostname": config.app.hostname,
-            "imagePullSecrets.name": config.k8s_secret.name,
+            "imagePullSecrets": config.k8s_secret.name,
             "imagePullSecrets.repository": config.container_repo.host,
-            "imagePullSecrets.username": env.USERNAME,
-            "imagePullSecrets.password": env.PASSWORD,
-            "imagePullSecrets.email": "ServicePrincipal@AzureRM",
+            "buildID": env.BUILD_ID,
           ]
         )
 
