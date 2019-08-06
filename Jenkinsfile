@@ -83,13 +83,13 @@ volumes:[
           namespace     : config.app.name,
           chart_dir     : chart_dir,
           set           : [
+            "image.repository": config.container_repo.host,
             "image.tag": image_tags_list.get(0),
             "replicas": config.app.replicas,
             "cpu": config.app.cpu,
             "memory": config.app.memory,
             "ingress.hostname": config.app.hostname,
             "imagePullSecrets": config.k8s_secret.name,
-            "imagePullSecrets.repository": config.container_repo.host,
             "buildID": env.BUILD_ID,
           ]
         )
