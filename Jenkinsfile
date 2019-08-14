@@ -12,11 +12,15 @@ podTemplate(label: 'jenkins-pipeline', containers: [
     containerTemplate(name: 'docker', image: 'docker:latest', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'golang', image: 'golang:1.12.7', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:v2.14.2', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.15.1', command: 'cat', ttyEnabled: true)
+    containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.15.1', command: 'cat', ttyEnabled: true),
+    containerTemplate(name: 'azcli', image: 'microsoft/azure-cli:latest', command: 'cat', ttyEnabled: true),
+    containerTemplate(name: 'aqua', image: 'registry.aquasec.com/scanner:4.2', command: 'cat', ttyEnabled: true)
 ],
 volumes:[
     hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
-]){
+	  hostPathVolume(mountPath: '/tmp', hostPath: '/tmp')
+],
+imagePullSecrets: [ 'aqua' ]){
 
   node ('jenkins-pipeline') {
 
@@ -97,7 +101,29 @@ volumes:[
       }
     }
 
-    stage ('publish container') {
+    stage ('helm package') {
+      container('helm') {
+        // run helm chart package
+        pipeline.helmPackage(chart_dir)
+      }
+    }
+  stage ('helm chart upload') {
+    container('azcli') {
+      println "Uploading helm chart to ACR"
+        withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: config.az_sub.jenkins_creds_id,
+                        usernameVariable: 'TENANT_ID', passwordVariable: 'PASSWORD']]) {
+          // perform az login
+          pipeline.azLogin(
+              appid   : config.az_sub.appid
+          )
+          pipeline.azHelmUpload(
+              repo    : config.az_sub.helmReg
+          )
+        }
+      }
+    }
+
+stage ('docker build') {
 
       container('docker') {
 
@@ -107,32 +133,49 @@ volumes:[
           sh "echo ${env.PASSWORD} | docker login -u ${env.USERNAME} --password-stdin ${config.container_repo.host}"
         }
 
-        // build and publish container
-        pipeline.containerBuildPub(
+        // dockerbuild
+        pipeline.containerBuild(
             dockerfile: config.container_repo.dockerfile,
             host      : config.container_repo.host,
             acct      : acct,
             repo      : config.container_repo.repo,
             tags      : image_tags_list,
-            auth_id   : config.container_repo.jenkins_creds_id,
-            image_scanning: config.container_repo.image_scanning
+            buildTag  : image_tags_list.get(0),
+            auth_id   : config.container_repo.jenkins_creds_id
         )
       }
+  }
 
+  stage ('aqua security scan') {
+    
+    container('docker'){
+      // aqua locationType: 'local', localImage: "${env.IMAGE_ID}", notCompliesCmd: 'exit 1', onDisallowed: 'fail'
+      aqua locationType: 'local', localImage: 'jdk8s/spring-boot-websocket-chat-demo:latest', notCompliesCmd: 'exit 1', onDisallowed: 'fail', customFlags: '--layer-vulnerabilities'
     }
+    // echo "image id ${env.IMAGE_ID}"
+  }
+        
+  stage ('publish container') {
 
-    stage ('helm package') {
+      container('docker') {
 
-      container('helm') {
+        // perform docker login to container registry as the docker-pipeline-plugin doesn't work with the next auth json format
+        withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: config.container_repo.jenkins_creds_id,
+                        usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+          sh "echo ${env.PASSWORD} | docker login -u ${env.USERNAME} --password-stdin ${config.container_repo.host}"
+        }
 
-        // run helm chart package
-        pipeline.helmPackage(chart_dir)
+        // publish container
+        pipeline.containerPublish(
+            dockerfile: config.container_repo.dockerfile,
+            host      : config.container_repo.host,
+            acct      : acct,
+            repo      : config.container_repo.repo,
+            tags      : image_tags_list,
+            auth_id   : config.container_repo.jenkins_creds_id
+        )
       }
-    }
-
-    stage('archive artifacts') {
-      archiveArtifacts '*.tgz'
-   }
+  }
 
     // deploy only the master branch
     // if (env.BRANCH_NAME == 'master') {
