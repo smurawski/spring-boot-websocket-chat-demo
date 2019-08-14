@@ -1,5 +1,7 @@
 FROM maven:3-jdk-11 as BUILD
 
+USER 1000:1000
+
 COPY . /usr/src/app
 RUN mvn --batch-mode -f /usr/src/app/pom.xml clean package
 
