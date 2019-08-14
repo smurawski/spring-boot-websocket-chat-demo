@@ -149,7 +149,6 @@ stage ('docker build') {
   stage ('aqua security scan') {
     
     container('docker'){
-      // aqua locationType: 'local', localImage: "${env.IMAGE_ID}", notCompliesCmd: 'exit 1', onDisallowed: 'fail'
       aqua locationType: 'local', localImage: 'jdk8s/chattybot:latest', notCompliesCmd: 'exit 1', onDisallowed: 'fail', customFlags: '--layer-vulnerabilities'
     }
     // echo "image id ${env.IMAGE_ID}"
