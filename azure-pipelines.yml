@@ -47,8 +47,8 @@ stages:
               export M2_HOME=/usr/share/maven
               jfrog rt mvn "clean install -U -Dproject.version=$(Build.BuildId) -Dartifactory.publish.buildInfo=true" --build-name=$(System.TeamProject) --build-number=$(Build.BuildId)
 
-              jfrog rt build-collect-env $(System.TeamProject) $(Build.BuildId)
-              jfrog rt build-publish $(System.TeamProject) $(Build.BuildId)
+              # jfrog rt build-collect-env $(System.TeamProject) $(Build.BuildId)
+              # jfrog rt build-publish $(System.TeamProject) $(Build.BuildId)
             displayName: "jfrog maven build"
 
           - task: Docker@2
@@ -86,8 +86,8 @@ stages:
 
               # --- JFrog Publish Build Info to Artifactory
               jfrog rt build-collect-env $(System.TeamProject) $(Build.BuildId)
-
               jfrog rt build-add-git $(System.TeamProject) $(Build.BuildId)
+              jfrog rt build-publish $(System.TeamProject) $(Build.BuildId)
 
               # --- Upload Helm Chart Artifact to Artifactory
               jfrog rt upload --server-id=$(server-id) --build-name=$(System.TeamProject) --build-number=$(Build.BuildId) "$(Build.ArtifactStagingDirectory)/*.tgz" helm-repo
