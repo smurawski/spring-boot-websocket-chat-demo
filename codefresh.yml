@@ -182,23 +182,14 @@ steps:
         - "ingress.hostname=${{INGRESS_HOSTNAME}}"
         - "image.repository=${{REPOSITORY}}"
         - "image.tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}"
-  # Deploy_with_Helm:
-  #   # image: codefresh/cfstep-helm:2.14.1
-  #   image: codefresh/cfstep-helm:3.0.3
-  #   stage: "deploy"
-  #   when:
-  #     steps:
-  #       - name: askForPermission
-  #         on:
-  #           - approved
-  #   environment:
-  #     - custom_image_tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}
-  #     - custom_image_repository=${{REPOSITORY}}
-  #     - custom_ingress_hostname=${{INGRESS_HOSTNAME}}
-  #     - custom_replicaCount=3
-  #     - custom_buildID=${{CF_BUILD_ID}}
-  #   on_success:
-  #     metadata:
-  #       set:
-  #         - "${{BuildingDockerImage.imageId}}":
-  #             - DEPLOYED_TO_AZURE_AKS: true
+  notes:
+    image: alpine:3.11.3
+    stage: "deploy"
+    shell: bash
+    commands:
+      - echo "Your application can be viewed at ${{INGRESS_HOSTNAME}}."
+    on_success:
+      metadata:
+        set:
+          - "${{BuildingDockerImage.imageId}}":
+              - DEPLOYED_TO_AZURE_AKS: true
