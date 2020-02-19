@@ -89,7 +89,9 @@ stages:
 
               # --- JFrog Publish Build Info to Artifactory
               jfrog rt build-collect-env $(System.TeamProject) $(Build.BuildId)
+
               jfrog rt build-add-git $(System.TeamProject) $(Build.BuildId)
+
               jfrog rt build-publish $(System.TeamProject) $(Build.BuildId)
 
               # -- build publish

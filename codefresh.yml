@@ -21,8 +21,6 @@ steps:
       - export M2_HOME=/usr/share/maven
       - jfrog rt config ${{JFROG_SERVER_ID}} --url=https://jfrogjd.jfrog.io/jfrogjd --user=${{JFROG_USER}} --password=${{JFROG_PASS}} --interactive=false
       - jfrog rt mvn "clean install -U -Dproject.version=${{CF_BUILD_ID}} -Dartifactory.publish.buildInfo=true" --build-name=${{CF_REPO_NAME}}-2020 --build-number=${{CF_BUILD_ID}}
-      - jfrog rt build-collect-env ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
-      - jfrog rt build-publish ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
 
   BuildingDockerImage:
     title: Building Docker Image
@@ -82,12 +80,15 @@ steps:
           # --- Jfrog Docker Push
               jfrog rt docker-push --server-id=${{JFROG_SERVER_ID}} --build-name=${{CF_REPO_NAME}}-2020 --build-number=${{CF_BUILD_ID}} "${{REPOSITORY}}:${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}" docker-dev
 
-          # --- JFrog Publish Build Info to Artifactory
-              jfrog rt build-collect-env ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
-              jfrog rt build-add-git ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
-
           # --- Upload Helm Chart Artifact to Artifactory
               jfrog rt upload --build-name=${{CF_REPO_NAME}}-2020 --build-number=${{CF_BUILD_ID}} "$PACKAGE" helm-repo
+
+          # --- JFrog Publish Build Info to Artifactory
+              jfrog rt build-collect-env ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
+              
+              jfrog rt build-add-git ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
+              
+              jfrog rt build-publish ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
 
           # -- build publish
               jfrog rt build-publish --build-url="${{CF_BUILD_URL}}" --env-exclude="*key*;*pass*;" ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}} |& tee publish.txt
