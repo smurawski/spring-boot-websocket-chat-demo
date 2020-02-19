@@ -79,18 +79,20 @@ steps:
           # --- Login to Artifactory
               jfrog rt config ${{JFROG_SERVER_ID}} --url=https://jfrogjd.jfrog.io/jfrogjd --user=${{JFROG_USER}} --password=${{JFROG_PASS}} --interactive=false
 
+          # --- Jfrog Docker Push
+              jfrog rt docker-push --server-id=${{JFROG_SERVER_ID}} --build-name=${{CF_REPO_NAME}}-2020 --build-number=${{CF_BUILD_ID}} "${{REPOSITORY}}:${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}" docker-dev
+
           # --- JFrog Publish Build Info to Artifactory
               jfrog rt build-collect-env ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
               jfrog rt build-add-git ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
-
-          # --- Jfrog Docker Push
-              jfrog rt docker-push --server-id=${{JFROG_SERVER_ID}} --build-name=${{CF_REPO_NAME}}-2020 --build-number=${{CF_BUILD_ID}} "${{REPOSITORY}}:${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}" docker-dev
 
           # --- Upload Helm Chart Artifact to Artifactory
               jfrog rt upload --build-name=${{CF_REPO_NAME}}-2020 --build-number=${{CF_BUILD_ID}} "$PACKAGE" helm-repo
 
           # -- build publish
               jfrog rt build-publish --build-url="${{CF_BUILD_URL}}" --env-exclude="*key*;*pass*;" ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}} |& tee publish.txt
+
+          # -- codefresh annoations
               codefresh auth create-context --api-key ${{CODEFRESH_CLI_KEY}}
               export JF_BUILD="$$(sed -n "s/^.*http/http/p" publish.txt)"
               codefresh annotate image jldeen/chattybot:${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}} --label JF_BUILD="$$(sed -n "s/^.*http/http/p" publish.txt)"'
