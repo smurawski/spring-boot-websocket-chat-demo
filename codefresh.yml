@@ -182,11 +182,6 @@ steps:
         - "ingress.hostname=${{INGRESS_HOSTNAME}}"
         - "image.repository=${{REPOSITORY}}"
         - "image.tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}"
-      on_success:
-        metadata:
-          set:
-            - "${{BuildingDockerImage.imageId}}":
-                - DEPLOYED_TO_AZURE_AKS: true
   # Deploy_with_Helm:
   #   # image: codefresh/cfstep-helm:2.14.1
   #   image: codefresh/cfstep-helm:3.0.3
