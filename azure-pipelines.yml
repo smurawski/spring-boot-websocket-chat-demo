@@ -84,13 +84,13 @@ stages:
               # --- Jfrog Docker Push
               jfrog rt docker-push --server-id=$(server-id) --build-name=$(System.TeamProject) --build-number=$(Build.BuildId) "$(artDocker_URL)/$(Build.Repository.Name):$(Build.BuildId)" docker-dev
 
+              # --- Upload Helm Chart Artifact to Artifactory
+              jfrog rt upload --server-id=$(server-id) --build-name=$(System.TeamProject) --build-number=$(Build.BuildId) "$(Build.ArtifactStagingDirectory)/*.tgz" helm-repo
+
               # --- JFrog Publish Build Info to Artifactory
               jfrog rt build-collect-env $(System.TeamProject) $(Build.BuildId)
               jfrog rt build-add-git $(System.TeamProject) $(Build.BuildId)
               jfrog rt build-publish $(System.TeamProject) $(Build.BuildId)
-
-              # --- Upload Helm Chart Artifact to Artifactory
-              jfrog rt upload --server-id=$(server-id) --build-name=$(System.TeamProject) --build-number=$(Build.BuildId) "$(Build.ArtifactStagingDirectory)/*.tgz" helm-repo
 
               # -- build publish
               jfrog rt build-publish --build-url="https://dev.azure.com/$(System.CollectionId)/$(System.TeamProject)/_build/$(Build.BuildId)" --env-exclude="*key*;*pass*;" $(System.TeamProject) $(Build.BuildId) |& tee publish.txt
