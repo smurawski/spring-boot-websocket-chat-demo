@@ -159,23 +159,47 @@ steps:
     stage: "test"
     title: Promote to QA/Prod
 
-  Deploy_with_Helm:
-    # image: codefresh/cfstep-helm:2.14.1
-    image: jldeen/cfstep-helm:3.0.0-beta.4
-    stage: "deploy"
-    when:
-      steps:
-        - name: askForPermission
-          on:
-            - approved
-    environment:
-      - custom_image_tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}
-      - custom_image_repository=${{REPOSITORY}}
-      - custom_ingress_hostname=${{INGRESS_HOSTNAME}}
-      - custom_replicaCount=3
-      - custom_buildID=${{CF_BUILD_ID}}
+  Deploy_with_Helm3:
+  type: helm
+  when:
+    steps:
+      - name: askForPermission
+        on:
+          - approved
+  arguments:
+    ACTION: install
+    chart_name: charts/spring-boot-websocket-chat-demo
+    release_name: cf-chattybot1
+    namespace: cf-chattybot1
+    kube_context: jdk8s20
+    custom_values:
+      - image.tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}
+      - image.repository=${{REPOSITORY}}
+      - ingress.hostname=${{INGRESS_HOSTNAME}}
+      - replicaCount=3
+      - buildID=${{CF_BUILD_ID}}
     on_success:
       metadata:
         set:
           - "${{BuildingDockerImage.imageId}}":
               - DEPLOYED_TO_AZURE_AKS: true
+  # Deploy_with_Helm:
+  #   # image: codefresh/cfstep-helm:2.14.1
+  #   image: codefresh/cfstep-helm:3.0.3
+  #   stage: "deploy"
+  #   when:
+  #     steps:
+  #       - name: askForPermission
+  #         on:
+  #           - approved
+  #   environment:
+  #     - custom_image_tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}
+  #     - custom_image_repository=${{REPOSITORY}}
+  #     - custom_ingress_hostname=${{INGRESS_HOSTNAME}}
+  #     - custom_replicaCount=3
+  #     - custom_buildID=${{CF_BUILD_ID}}
+  #   on_success:
+  #     metadata:
+  #       set:
+  #         - "${{BuildingDockerImage.imageId}}":
+  #             - DEPLOYED_TO_AZURE_AKS: true
