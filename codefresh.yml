@@ -21,6 +21,7 @@ steps:
       - export M2_HOME=/usr/share/maven
       - jfrog rt config ${{JFROG_SERVER_ID}} --url=https://jfrogjd.jfrog.io/jfrogjd --user=${{JFROG_USER}} --password=${{JFROG_PASS}} --interactive=false
       - jfrog rt mvn "clean install -U -Dproject.version=${{CF_BUILD_ID}} -Dartifactory.publish.buildInfo=true" --build-name=${{CF_REPO_NAME}}-2020 --build-number=${{CF_BUILD_ID}}
+      - jfrog rt build-collect-env ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
 
   BuildingDockerImage:
     title: Building Docker Image
