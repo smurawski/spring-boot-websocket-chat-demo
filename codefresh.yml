@@ -159,26 +159,29 @@ steps:
     stage: "test"
     title: Promote to QA/Prod
 
-  Deploy_with_Helm3:
-    stage: "deploy"
+  helm:
     type: helm
+    title: Deploy with Helm3
+    fail_fast: true
+    stage: "deploy"
     when:
       steps:
         - name: askForPermission
           on:
             - approved
     arguments:
-      ACTION: install
+      kube_context: jdk8s20
       chart_name: charts/spring-boot-websocket-chat-demo
       release_name: cf-chattybot1
-      namespace: cf-chattybot1
-      kube_context: jdk8s20
+      action: install
+      namespace: cf-chattybot
+      helm_version: 3.0.3
       custom_values:
-        - image.tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}
-        - image.repository=${{REPOSITORY}}
-        - ingress.hostname=${{INGRESS_HOSTNAME}}
+        - "buildID=${{CF_BUILD_ID}}"
         - replicaCount=3
-        - buildID=${{CF_BUILD_ID}}
+        - "ingress.hostname=${{INGRESS_HOSTNAME}}"
+        - "image.repository=${{REPOSITORY}}"
+        - "image.tag=${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}"
       on_success:
         metadata:
           set:
