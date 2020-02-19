@@ -81,13 +81,13 @@ stages:
               save: false
 
           - bash: |
+              # --- Jfrog Docker Push
+              jfrog rt docker-push --server-id=$(server-id) --build-name=$(System.TeamProject) --build-number=$(Build.BuildId) "$(artDocker_URL)/$(Build.Repository.Name):$(Build.BuildId)" docker-dev
+
               # --- JFrog Publish Build Info to Artifactory
               jfrog rt build-collect-env $(System.TeamProject) $(Build.BuildId)
 
               jfrog rt build-add-git $(System.TeamProject) $(Build.BuildId)
-
-              # --- Jfrog Docker Push
-              jfrog rt docker-push --server-id=$(server-id) --build-name=$(System.TeamProject) --build-number=$(Build.BuildId) "$(artDocker_URL)/$(Build.Repository.Name):$(Build.BuildId)" docker-dev
 
               # --- Upload Helm Chart Artifact to Artifactory
               jfrog rt upload --server-id=$(server-id) --build-name=$(System.TeamProject) --build-number=$(Build.BuildId) "$(Build.ArtifactStagingDirectory)/*.tgz" helm-repo
@@ -97,6 +97,7 @@ stages:
 
               # --- Xray Scan
               jfrog rt build-scan --server-id=$(server-id) $(System.TeamProject) $(Build.BuildId) | tee results.json
+
             displayName: "jfrog publish build info to artifactory"
 
           - bash: |

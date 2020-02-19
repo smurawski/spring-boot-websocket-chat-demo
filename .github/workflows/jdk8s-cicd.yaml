@@ -365,20 +365,20 @@ jobs:
 
       - name: "publish build info to artifactory"
         run: |
-          # --- JFrog Publish Build Info to Artifactory
-          jfrog rt build-collect-env $GITHUB_REPOSITORY-2020 $GITHUB_RUN_ID
-
           # --- Jfrog Docker Push
           jfrog rt docker-push --server-id=$SERVER_ID --build-name=$GITHUB_REPOSITORY-2020 --build-number=$GITHUB_RUN_ID "$artDockerURL/$GITHUB_REPOSITORY:${{ github.sha }}" docker-dev
 
-          # --- Xray Scan
-          jfrog rt build-scan --server-id=$SERVER_ID $GITHUB_REPOSITORY-2020 $GITHUB_RUN_ID | tee results.json
+          # --- JFrog Publish Build Info to Artifactory
+          jfrog rt build-collect-env $GITHUB_REPOSITORY-2020 $GITHUB_RUN_ID
 
           # --- Upload Helm Chart Artifact to Artifactory
           jfrog rt upload --server-id=$SERVER_ID --build-name=$GITHUB_REPOSITORY-2020 --build-number=$GITHUB_RUN_ID "$GITHUB_WORKSPACE/*.tgz" helm-repo
 
           # -- build publish
           jfrog rt build-publish --build-url="https://github.com/$GITHUB_REPOSITORY/runs/$GITHUB_RUN_ID" --env-exclude="*key*;*pass*;" $GITHUB_REPOSITORY-2020 $GITHUB_RUN_ID |& tee publish.txt
+
+          # --- Xray Scan
+          jfrog rt build-scan --server-id=$SERVER_ID $GITHUB_REPOSITORY-2020 $GITHUB_RUN_ID | tee results.json
 
       - name: "slack build trigger"
         run: |
