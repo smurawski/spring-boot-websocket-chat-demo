@@ -128,6 +128,7 @@ stage ('docker build') {
       container('docker') {
 
         // perform docker login to container registry as the docker-pipeline-plugin doesn't work with the next auth json format
+        // container repo 1
         withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: config.container_repo.jenkins_creds_id,
                         usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
           sh "echo ${env.PASSWORD} | docker login -u ${env.USERNAME} --password-stdin ${config.container_repo.host}"
@@ -149,7 +150,7 @@ stage ('docker build') {
   stage ('aqua security scan') {
     
     container('docker'){
-      aqua locationType: 'local', localImage: 'jdk8s/chattybot:latest', notCompliesCmd: 'exit 1', onDisallowed: 'fail', customFlags: '--layer-vulnerabilities'
+      aqua locationType: 'local', localImage: 'jfrogjd-docker.jfrog.io/chattybot:latest', notCompliesCmd: 'exit 1', onDisallowed: 'fail', customFlags: '--layer-vulnerabilities'
     }
     // echo "image id ${env.IMAGE_ID}"
   }
