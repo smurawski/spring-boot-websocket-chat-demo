@@ -171,7 +171,7 @@ steps:
             - approved
     arguments:
       kube_context: jdk8s20
-      chart_name: $PACKAGE
+      chart_name: ./charts/spring-boot-websocket-chat-demo
       release_name: cf-chattybot1
       action: install
       namespace: cf-chattybot
