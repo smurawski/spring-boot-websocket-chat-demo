@@ -185,7 +185,6 @@ steps:
   notes:
     image: alpine:3.11.3
     stage: "deploy"
-    shell: bash
     commands:
       - echo "Your application can be viewed at ${{INGRESS_HOSTNAME}}."
     on_success:
