@@ -123,7 +123,7 @@ stages:
               fi
 
               curl -X POST --data-urlencode 'payload={"text":"JFrog XRay Scan Report for Azure DevOps Build '$(Build.BuildId)'","attachments":[{"fallback":"JFrog XRay Scan Report for Azure DevOps Build '$(Build.BuildId)'","color":"'$slackStyle'","author_link":"'$JF_XRAY_RPT'","title":"JFrog XRay Scan Report for Azure DevOps","title_link":"'$JF_XRAY_RPT'","text":"JFrog Xray Scan Report for Azure DevOps Build '$(Build.BuildId)'","fields":[{"title":"XRay Alerts","value":"'$JF_XRAY_ALERTS' alerts were generated","short":false},{"title":"Requested for","value":"Jessica Deen","short":false}],"footer":"JFrog XRay Scan Notifications","footer_icon":"https:\/\/www.clipartmax.com\/png\/middle\/69-698347_jfrog-artifactory-logo.png"}]}' $(SLACK_WEBHOOK_URL) > /dev/null 2>&1 && echo "Slack XRay Message Posted"
-              #if [[ "'$JF_SCAN_FAIL'" = *true* ]]; then exit 1; else exit 0; fi
+              if [[ "'$JF_SCAN_FAIL'" = *true* ]]; then exit 1; else exit 0; fi
             displayName: "Slack Xray Trigger"
 
   - stage: DeployToDev
