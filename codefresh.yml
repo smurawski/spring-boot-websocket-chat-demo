@@ -84,12 +84,10 @@ steps:
           # --- Upload Helm Chart Artifact to Artifactory
               jfrog rt upload --build-name=${{CF_REPO_NAME}}-2020 --build-number=${{CF_BUILD_ID}} "$PACKAGE" helm-repo
 
-          # --- JFrog Publish Build Info to Artifactory
+          # --- JFrog Collect Build Info to Artifactory
               jfrog rt build-collect-env ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
               
               jfrog rt build-add-git ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
-              
-              #jfrog rt build-publish ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
 
           # -- build publish
               jfrog rt build-publish --build-url="${{CF_BUILD_URL}}" --env-exclude="*key*;*pass*;" ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}} |& tee publish.txt
