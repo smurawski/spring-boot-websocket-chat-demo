@@ -89,7 +89,7 @@ steps:
               
               jfrog rt build-add-git ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
               
-              jfrog rt build-publish ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
+              #jfrog rt build-publish ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
 
           # -- build publish
               jfrog rt build-publish --build-url="${{CF_BUILD_URL}}" --env-exclude="*key*;*pass*;" ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}} |& tee publish.txt

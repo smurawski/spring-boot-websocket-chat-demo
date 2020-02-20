@@ -370,7 +370,7 @@ jobs:
 
           # --- JFrog Publish Build Info to Artifactory
           jfrog rt build-collect-env $GITHUB_REPOSITORY-2020 $GITHUB_RUN_ID
-          jfrog rt build-publish $GITHUB_REPOSITORY-2020 $GITHUB_RUN_ID
+          #jfrog rt build-publish $GITHUB_REPOSITORY-2020 $GITHUB_RUN_ID
 
           # -- build publish
           jfrog rt build-publish --build-url="https://github.com/$GITHUB_REPOSITORY/runs/$GITHUB_RUN_ID" --env-exclude="*key*;*pass*;" $GITHUB_REPOSITORY-2020 $GITHUB_RUN_ID |& tee publish.txt
