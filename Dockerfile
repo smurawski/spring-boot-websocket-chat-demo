@@ -1,9 +1,12 @@
-# FROM openjdk:11-jre-slim
-FROM jfrogjd-docker.jfrog.io/jldeen/alpine-jre-patched:latest
-RUN apk update && apk add bash
-ENV PORT 8080
+# FROM openjdk:8-jdk-alpine
+FROM openjdk:11-jre-slim
+# FROM jfrogjd-docker.jfrog.io/jldeen/alpine-jre-patched:2
+# RUN apk update && apk add bash
+VOLUME /tmp
+ARG JAVA_OPTS
+ENV JAVA_OPTS=$JAVA_OPTS
+ADD target/websocket-demo-1.0.2-SNAPSHOT.jar spring-boot-websocket-chat-demo.jar
 EXPOSE 8080
-COPY ./target /opt/target
-WORKDIR /opt/target
-
-CMD ["/bin/bash", "-c", "find -type f -name '*.jar' | xargs java -jar"]
+ENTRYPOINT exec java $JAVA_OPTS -jar spring-boot-websocket-chat-demo.jar
+# For Spring-Boot project, use the entrypoint below to reduce Tomcat startup time.
+#ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar spring-boot-websocket-chat-demo.jar
