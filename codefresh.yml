@@ -162,6 +162,7 @@ steps:
     title: Deploy with Helm3
     fail_fast: true
     stage: "deploy"
+    working_directory: ./spring-boot-websocket-chat-demo
     when:
       steps:
         - name: askForPermission
@@ -169,11 +170,11 @@ steps:
             - approved
     arguments:
       kube_context: jdk8s20
-      chart_name: /codefresh/volume/spring-boot-websocket-chat-demo/charts/spring-boot-websocket-chat-demo
+      chart_name: charts/spring-boot-websocket-chat-demo
       release_name: cf-chattybot1
       action: install
       namespace: cf-chattybot
-      helm_version: 3.0.3
+      helm_version: 3.1.1
       custom_values:
         - "buildID=${{CF_BUILD_ID}}"
         - replicaCount=3
