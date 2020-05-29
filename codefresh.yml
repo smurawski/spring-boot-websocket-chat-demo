@@ -95,7 +95,7 @@ steps:
           # -- codefresh annoations
               codefresh auth create-context --api-key ${{CODEFRESH_CLI_KEY}}
               export JF_BUILD="$$(sed -n "s/^.*http/http/p" publish.txt)"
-              codefresh annotate image jldeen/chattybot:${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}} --label JF_BUILD="$$(sed -n "s/^.*http/http/p" publish.txt)"'
+              # codefresh annotate image jldeen/chattybot:${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}} --label JF_BUILD="$$(sed -n "s/^.*http/http/p" publish.txt)"'
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - /var/lib/docker:/var/lib/docker
