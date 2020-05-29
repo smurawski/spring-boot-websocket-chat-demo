@@ -317,13 +317,13 @@ jobs:
       - name: "jfrog install, configure cli"
         run: |
           # Get Jfrog CLI
-          if [ -e jfrog ]; then
-              echo "Jfrog binary already exists. Logging into Artifactory now.."
-          else
-              echo "Jfrog binary does not exist. Downloading now...."
-              curl -fL https://getcli.jfrog.io | sh
-              sudo mv jfrog /usr/local/bin
-          fi
+          # if [ -e jfrog ]; then
+          #     echo "Jfrog binary already exists. Logging into Artifactory now.."
+          # else
+          #     echo "Jfrog binary does not exist. Downloading now...."
+          #     curl -fL https://getcli.jfrog.io | sh
+          #     sudo mv jfrog /usr/local/bin
+          # fi
 
           # Configure Jfrog CLI
           jfrog rt config $SERVER_ID --url=$ART_URL --user=$ART_USER --password=${{ secrets.ART_PASS }} --interactive=false
