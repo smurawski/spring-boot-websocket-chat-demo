@@ -67,7 +67,7 @@ steps:
           command: sh -c "exit 0"
     composition_candidates:
       dockerinfo_upload:
-        image: jldeen/docker-jfrog-cli-java:1.0.4
+        image: jldeen/docker-jfrog-cli-java:1.0.5
         working_dir: ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}
         environment:
           - JFROG_CLI_OFFER_CONFIG=false
@@ -89,8 +89,8 @@ steps:
               
               jfrog rt build-add-git ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}}
 
-          # # -- build publish
-          #     jfrog rt build-publish --build-url="${{CF_BUILD_URL}}" --env-exclude="*key*;*pass*;" ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}} |& tee publish.txt
+          # -- build publish
+              jfrog rt build-publish --build-url="${{CF_BUILD_URL}}" --env-exclude="*key*;*pass*;" ${{CF_REPO_NAME}}-2020 ${{CF_BUILD_ID}} |& tee publish.txt
 
           # -- codefresh annoations
               codefresh auth create-context --api-key ${{CODEFRESH_CLI_KEY}}
