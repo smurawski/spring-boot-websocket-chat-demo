@@ -332,7 +332,7 @@ jobs:
         run: |
           # --- jfrog Maven Build
           export M2_HOME=/usr/share/maven
-          jfrog rt mvn "clean install -U -Dproject.version=$GITHUB_RUN_ID -Dartifactory.publish.buildInfo=true" --build-name=$GITHUB_REPOSITORY-2020 --build-number=$GITHUB_RUN_ID
+          jfrog rt mvn "clean install -U -Dproject.version=$GITHUB_RUN_ID -Dartifactory.publish.buildInfo=true" --build-name=gh-chattybot-2020 --build-number=$GITHUB_RUN_ID
 
       # docker login
       - name: "docker login"
@@ -347,9 +347,9 @@ jobs:
         run: |
           echo ${{ secrets.ART_PASS }} | docker login $artDockerURL -u $ART_USER --password-stdin && echo "jfrog docker login successful"
 
-          docker build -f Dockerfile . -t $artDockerURL/$GITHUB_REPOSITORY:${{ github.sha }}
+          docker build -f Dockerfile . -t $artDockerURL/gh-chattybot:${{ github.sha }}
 
-          docker push $artDockerURL/$GITHUB_REPOSITORY:${{ github.sha }}
+          docker push $artDockerURL/gh-chattybot:${{ github.sha }}
 
       # helm lint
       - name: "helm lint"
@@ -363,19 +363,19 @@ jobs:
       - name: "publish build info to artifactory"
         run: |
           # --- Jfrog Docker Push
-          jfrog rt docker-push --server-id=$SERVER_ID --build-name=$GITHUB_REPOSITORY-2020 --build-number=$GITHUB_RUN_ID "$artDockerURL/$GITHUB_REPOSITORY:${{ github.sha }}" docker-dev
+          jfrog rt docker-push --server-id=$SERVER_ID --build-name=gh-chattybot-2020 --build-number=$GITHUB_RUN_ID "$artDockerURL/gh-chattybot:${{ github.sha }}" docker-dev
 
           # --- Upload Helm Chart Artifact to Artifactory
-          jfrog rt upload --server-id=$SERVER_ID --build-name=$GITHUB_REPOSITORY-2020 --build-number=$GITHUB_RUN_ID "$GITHUB_WORKSPACE/*.tgz" helm-repo
+          jfrog rt upload --server-id=$SERVER_ID --build-name=gh-chattybot-2020 --build-number=$GITHUB_RUN_ID "$GITHUB_WORKSPACE/*.tgz" helm-repo
 
           # --- JFrog Collect Build Info to Artifactory
-          jfrog rt build-collect-env $GITHUB_REPOSITORY-2020 $GITHUB_RUN_ID
+          jfrog rt build-collect-env gh-chattybot-2020 $GITHUB_RUN_ID
 
           # -- build publish
-          jfrog rt build-publish --build-url="https://github.com/$GITHUB_REPOSITORY/runs/$GITHUB_RUN_ID" --env-exclude="*key*;*pass*;" $GITHUB_REPOSITORY-2020 $GITHUB_RUN_ID |& tee publish.txt
+          jfrog rt build-publish --build-url="https://github.com/$GITHUB_REPOSITORY/runs/$GITHUB_RUN_ID" --env-exclude="*key*;*pass*;" gh-chattybot-2020 $GITHUB_RUN_ID |& tee publish.txt
 
           # --- Xray Scan
-          jfrog rt build-scan --server-id=$SERVER_ID $GITHUB_REPOSITORY-2020 $GITHUB_RUN_ID | tee results.json
+          jfrog rt build-scan --server-id=$SERVER_ID gh-chattybot-2020 $GITHUB_RUN_ID | tee results.json
 
       - name: "slack build trigger"
         run: |
@@ -419,7 +419,7 @@ jobs:
       - name: "helm install chattybot dev"
         run: |
           # spring deploy
-          helm upgrade --install chattybot-dev $GITHUB_WORKSPACE/spring-boot-websocket-chat-demo-v0.1.0.tgz --namespace=$nameSpace --set ingress.hostname=ghchattybot-dev.k8s.az.jessicadeen.com --set image.repository=$artDockerURL/$GITHUB_REPOSITORY --set image.tag=$GITHUB_SHA --set buildID=$GITHUB_RUN_ID
+          helm upgrade --install chattybot-dev $GITHUB_WORKSPACE/spring-boot-websocket-chat-demo-v0.1.0.tgz --namespace=$nameSpace --set ingress.hostname=ghchattybot-dev.k8s.az.jessicadeen.com --set image.repository=$artDockerURL/gh-chattybot --set image.tag=$GITHUB_SHA --set buildID=$GITHUB_RUN_ID
 
       - name: "Label all pods for network policy"
         run: |
@@ -443,7 +443,7 @@ jobs:
       - name: "helm install chattybot prod"
         run: |
           # spring deploy
-          helm upgrade --install chattybot $GITHUB_WORKSPACE/spring-boot-websocket-chat-demo-v0.1.0.tgz --namespace=$nameSpace --set ingress.hostname=ghchattybot.k8s.az.jessicadeen.com --set image.repository=$artDockerURL/$GITHUB_REPOSITORY --set image.tag=$GITHUB_SHA --set replicaCount=3 --set buildID=$GITHUB_RUN_ID
+          helm upgrade --install chattybot $GITHUB_WORKSPACE/spring-boot-websocket-chat-demo-v0.1.0.tgz --namespace=$nameSpace --set ingress.hostname=ghchattybot.k8s.az.jessicadeen.com --set image.repository=$artDockerURL/gh-chattybot --set image.tag=$GITHUB_SHA --set replicaCount=3 --set buildID=$GITHUB_RUN_ID
 
       - name: "Label all pods for network policy"
         run: |
