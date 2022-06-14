@@ -62,7 +62,7 @@ resource app 'Microsoft.App/containerApps@2022-03-01' = {
       }
       secrets: [
         {
-          name: 'registry_password'
+          name: 'registry-password'
           value: registry_password
         }
       ]
@@ -70,7 +70,7 @@ resource app 'Microsoft.App/containerApps@2022-03-01' = {
         {
           server: registry_login_server
           username: registry_username
-          passwordSecretRef: 'registry_password'
+          passwordSecretRef: 'registry-password'
         }
       ]
     }
