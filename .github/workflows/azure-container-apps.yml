@@ -55,7 +55,7 @@ jobs:
             - name: Deploy Azure Container App
               run: |-
                 az deployment group create --resource-group ${{ env.RESOURCE_GROUP }} \
-                  --template ./deploy/main.bicep \
+                  --template-file ./deploy/main.bicep \
                   --parameters registry_login_server=${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io \
                   --parameters registry_username=${{ steps.get-acr-creds.outputs.username }} \
                   --parameters registry_password=${{ steps.get-acr-creds.outputs.password }} \
