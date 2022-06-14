@@ -1,13 +1,12 @@
+FROM maven:3-jdk-11 as BUILD
 
-FROM openjdk:8-jdk-alpine
+COPY . /usr/src/app
+RUN mvn --batch-mode -f /usr/src/app/pom.xml clean package
 
-USER 1000
-
-VOLUME /tmp
-ARG JAVA_OPTS
-ENV JAVA_OPTS=$JAVA_OPTS
-ADD target/websocket-demo-1.0.2-SNAPSHOT.jar spring-boot-websocket-chat-demo.jar
+FROM openjdk:11-jre-slim
+ENV PORT 8080
 EXPOSE 8080
-ENTRYPOINT exec java $JAVA_OPTS -jar spring-boot-websocket-chat-demo.jar
-# For Spring-Boot project, use the entrypoint below to reduce Tomcat startup time.
-#ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar spring-boot-websocket-chat-demo.jar
+COPY --from=BUILD /usr/src/app/target /opt/target
+WORKDIR /opt/target
+
+CMD ["/bin/bash", "-c", "find -type f -name '*-SNAPSHOT.jar' | xargs java -jar"]
