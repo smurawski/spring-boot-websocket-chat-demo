@@ -1,8 +1,0 @@
-version: '3.4'
-
-services:
-  spring-boot-websocket-chat-demo:
-    image: spring-boot-websocket-chat-demo
-    build: .
-    ports:
-      - 8080
